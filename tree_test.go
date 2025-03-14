@@ -3,6 +3,7 @@ package tree
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -10,6 +11,7 @@ type MyNode struct {
 	Id       uint64
 	Name     string
 	Pid      uint64
+	Level    int
 	Children []*MyNode
 }
 
@@ -24,6 +26,8 @@ func TestBuild(t *testing.T) {
 		{Id: 6, Name: "s3", Pid: 3},
 		{Id: 7, Name: "s4", Pid: 8},
 		{Id: 8, Name: "s4", Pid: 0},
+		{Id: 9, Name: "s6", Pid: 8},
+		{Id: 10, Name: "16", Pid: 9},
 	}
 
 	tree := NewTree[MyNode]()
@@ -35,11 +39,9 @@ func TestBuild(t *testing.T) {
 
 }
 func printNode(node *MyNode, level int) {
-	prefix := ""
-	for i := 0; i < level; i++ {
-		prefix += "  "
-	}
-	fmt.Printf("%sId: %d, Name: %s, Pid: %d\n", prefix, node.Id, node.Name, node.Pid)
+	prefix := strings.Repeat("  ", level)
+	fmt.Printf("%sId: %d, Name: %s, Pid: %d Lvl %d \n", prefix, node.Id, node.Name, node.Pid, node.Level)
+
 	for _, child := range node.Children {
 		printNode(child, level+1)
 	}

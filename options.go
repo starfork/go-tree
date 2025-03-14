@@ -11,6 +11,7 @@ type Options[Node any] struct {
 	Id       string
 	parentId string
 	children string
+	lvl      string
 
 	addChild func(parent, child *Node) error
 }
@@ -22,6 +23,11 @@ type Option[Node any] func(o *Options[Node])
 func WithID[Node any](f string) Option[Node] {
 	return func(o *Options[Node]) {
 		o.Id = f
+	}
+}
+func WithLevl[Node any](f string) Option[Node] {
+	return func(o *Options[Node]) {
+		o.lvl = f
 	}
 }
 func WithPidValue[Node any](f int) Option[Node] {
@@ -56,15 +62,28 @@ func DefaultOptions[Node any]() *Options[Node] {
 		pidValue: 0,
 		Id:       "Id",
 		parentId: "Pid",
+		lvl:      "Level",
 		children: children,
 
+		// addChild: func(parent, child *Node) error {
+		// 	v := reflect.ValueOf(child).Elem()
+		// 	cf := v.FieldByName(children)
+		// 	if !cf.IsValid() || cf.Kind() != reflect.Slice || !cf.CanSet() {
+		// 		return fmt.Errorf("field Children is not a settable slice")
+		// 	}
+		// 	cf.Set(reflect.Append(cf, reflect.ValueOf(parent)))
+		// 	return nil
+		// },
 		addChild: func(parent, child *Node) error {
-			v := reflect.ValueOf(child).Elem()
+			v := reflect.ValueOf(parent).Elem()
 			cf := v.FieldByName(children)
 			if !cf.IsValid() || cf.Kind() != reflect.Slice || !cf.CanSet() {
-				return fmt.Errorf("field Children is not a settable slice")
+				return fmt.Errorf("field %s is not a settable slice", children)
 			}
-			cf.Set(reflect.Append(cf, reflect.ValueOf(parent)))
+
+			// 追加子节点
+			newChildren := reflect.Append(cf, reflect.ValueOf(child))
+			cf.Set(newChildren)
 			return nil
 		},
 	}
