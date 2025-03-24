@@ -21,8 +21,8 @@ func NewTree[Node any](opt ...Option[Node]) *Tree[Node] {
 
 // 大多数场景，父节点的id都是小于子节点的。如果不是，则下面这个循环会遗漏
 func (e *Tree[Node]) Build(data []*Node) ([]*Node, error) {
-	idMap := make(map[interface{}]*Node)
-	childMap := make(map[interface{}][]*Node)
+	idMap := make(map[any]*Node)
+	childMap := make(map[any][]*Node)
 
 	// Step 1: 构建 idMap 和 childMap
 	for _, item := range data {
@@ -45,12 +45,8 @@ func (e *Tree[Node]) Build(data []*Node) ([]*Node, error) {
 	setLevel = func(node *Node, level int) {
 		if e.opts.lvl != "" {
 			lvlField := reflect.ValueOf(node).Elem().FieldByName(e.opts.lvl)
-			if lvlField.IsValid() && lvlField.CanSet() {
-				if lvlField.Kind() == reflect.Int || lvlField.Kind() == reflect.Int64 {
-					lvlField.SetInt(int64(level))
-				} else {
-					return // lvl字段类型不匹配，跳过
-				}
+			if lvlField.IsValid() && lvlField.CanSet() && lvlField.Kind() >= reflect.Int && lvlField.Kind() <= reflect.Uint64 {
+				lvlField.Set(reflect.ValueOf(level).Convert(lvlField.Type()))
 			}
 		}
 

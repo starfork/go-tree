@@ -11,7 +11,7 @@ type MyNode struct {
 	Id       uint64
 	Name     string
 	Pid      uint64
-	Level    int
+	Level    uint32
 	Children []*MyNode
 }
 
@@ -27,7 +27,7 @@ func TestBuild(t *testing.T) {
 		{Id: 7, Name: "s4", Pid: 8},
 		{Id: 8, Name: "s4", Pid: 0},
 		{Id: 9, Name: "s6", Pid: 8},
-		{Id: 10, Name: "16", Pid: 9},
+		{Id: 10, Name: "16", Pid: 6},
 	}
 
 	tree := NewTree[MyNode]()
