@@ -64,16 +64,6 @@ func DefaultOptions[Node any]() *Options[Node] {
 		parentId: "Pid",
 		lvl:      "Level",
 		children: children,
-
-		// addChild: func(parent, child *Node) error {
-		// 	v := reflect.ValueOf(child).Elem()
-		// 	cf := v.FieldByName(children)
-		// 	if !cf.IsValid() || cf.Kind() != reflect.Slice || !cf.CanSet() {
-		// 		return fmt.Errorf("field Children is not a settable slice")
-		// 	}
-		// 	cf.Set(reflect.Append(cf, reflect.ValueOf(parent)))
-		// 	return nil
-		// },
 		addChild: func(parent, child *Node) error {
 			v := reflect.ValueOf(parent).Elem()
 			cf := v.FieldByName(children)

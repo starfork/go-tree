@@ -24,8 +24,8 @@ func (e *Tree[Node]) Build(data []*Node) ([]*Node, error) {
 	idMap := make(map[any]*Node)
 	childMap := make(map[any][]*Node)
 
-	// Step 1: 构建 idMap 和 childMap
 	for _, item := range data {
+		fmt.Println(item)
 		id := reflect.ValueOf(item).Elem().FieldByName(e.opts.Id)
 		pid := reflect.ValueOf(item).Elem().FieldByName(e.opts.parentId)
 
@@ -40,7 +40,6 @@ func (e *Tree[Node]) Build(data []*Node) ([]*Node, error) {
 		childMap[pidValue] = append(childMap[pidValue], item)
 	}
 
-	// Step 2: 将子节点挂载到对应的父节点，并设置层级
 	var setLevel func(node *Node, level int)
 	setLevel = func(node *Node, level int) {
 		if e.opts.lvl != "" {
@@ -60,7 +59,6 @@ func (e *Tree[Node]) Build(data []*Node) ([]*Node, error) {
 		}
 	}
 
-	// Step 3: 找出根节点
 	var roots []*Node
 	for _, node := range data {
 		pid := reflect.ValueOf(node).Elem().FieldByName(e.opts.parentId).Interface()
